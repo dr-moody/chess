@@ -17,7 +17,13 @@ public class ChessBoard {
     private final ChessPiece[][] board = new ChessPiece[9][9];
 
     public ChessBoard() {
-//
+
+        for (ChessPiece[] row : board) {
+            row[0] = new ChessPiece(NEUTRAL, OUT_OF_BOUNDS);
+        }
+        for (ChessPiece square : board[0]) {
+            square = new ChessPiece(NEUTRAL, OUT_OF_BOUNDS);
+        }
     }
 
 //    Currently the board prints upsidedown--I should fix this
@@ -76,7 +82,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getColumn()][position.getRow()];
+        return board[position.getRow()][position.getColumn()];
     }
 
     /**
