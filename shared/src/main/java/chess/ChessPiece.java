@@ -223,11 +223,59 @@ public class ChessPiece {
                 }
             }
         }
+        else if (type == BISHOP) {
+            // Up Right
+            for (int i = 1; ((myPosition.getColumn() + i) <= 8) && ((myPosition.getRow() + i) <= 8); i++) {
+                if (board.getPiece(new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + i)) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + i), null));
+                } else if (board.getPiece(new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + i)).getTeamColor() != color) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + i), null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+
+            // Up Left
+            for (int i = 1; ((myPosition.getColumn()) + i <= 8) && ((myPosition.getRow()) - i >= 1); i++) {
+                if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() + i)) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() + i), null));
+                } else if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() + i)).getTeamColor() != color) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() + i), null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+
+            // Down Right
+            for (int i = 1; ((myPosition.getColumn() - i) >= 1) && ((myPosition.getRow() + i) <= 8); i++) {
+                if (board.getPiece(new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() - i)) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() - i), null));
+                } else if (board.getPiece(new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() - i)).getTeamColor() != color) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() - i), null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+
+            // Down Left
+            for (int i = 1; ((myPosition.getColumn() - i) >= 1) && ((myPosition.getRow() - i) >= 1); i++) {
+                if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i), null));
+                } else if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)).getTeamColor() != color) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i), null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
     //        else if (type == KNIGHT) {
     //
-    //        } else if (type == BISHOP) {
-    //
-    //        } else if (type == KING) {
+    //        }
+    //        else if (type == KING) {
     //
     //        } else if (type == QUEEN) {
     //
