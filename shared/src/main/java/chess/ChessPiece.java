@@ -174,9 +174,56 @@ public class ChessPiece {
                 }
             }
 
-    //        } else if (type == ROOK) {
-    //
-    //        } else if (type == KNIGHT) {
+        } else if (type == ROOK) {
+            // Up
+            for (int i = myPosition.getColumn() + 1; i <= 8; i++) {
+                if (board.getPiece(new ChessPosition(myPosition.getRow(), i)) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), i), null));
+                } else if (board.getPiece(new ChessPosition(myPosition.getRow(), i)).getTeamColor() != color) {
+                        movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), i), null));
+                        break;
+                } else {
+                    break;
+                }
+            }
+
+            // Down
+            for (int i = myPosition.getColumn() - 1; i >= 1; i--) {
+                if (board.getPiece(new ChessPosition(myPosition.getRow(), i)) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), i), null));
+                } else if (board.getPiece(new ChessPosition(myPosition.getRow(), i)).getTeamColor() != color) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow(), i), null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+
+            // Left
+            for (int i = myPosition.getRow() - 1; i >= 1; i--) {
+                if (board.getPiece(new ChessPosition(i, myPosition.getColumn())) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(i, myPosition.getColumn()), null));
+                } else if (board.getPiece(new ChessPosition(i, myPosition.getColumn())).getTeamColor() != color) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(i, myPosition.getColumn()), null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+
+            // Right
+            for (int i = myPosition.getRow() + 1; i <= 8; i++) {
+                if (board.getPiece(new ChessPosition(i, myPosition.getColumn())) == null) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(i, myPosition.getColumn()), null));
+                } else if (board.getPiece(new ChessPosition(i, myPosition.getColumn())).getTeamColor() != color) {
+                    movesList.add(new ChessMove(myPosition, new ChessPosition(i, myPosition.getColumn()), null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+    //        else if (type == KNIGHT) {
     //
     //        } else if (type == BISHOP) {
     //
@@ -187,8 +234,6 @@ public class ChessPiece {
     //        }
 
 
-
-    }
         return movesList;
 }
 }
