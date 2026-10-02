@@ -21,6 +21,12 @@ public class ChessGame {
         currentBoard = new ChessBoard();
     }
 
+    public ChessGame(ChessGame other) {
+        this.turn = other.turn;
+        this.currentBoard = new ChessBoard();
+        setBoard(other.currentBoard);
+    }
+
     private TeamColor turn;
     private ChessBoard currentBoard;
 
@@ -46,7 +52,6 @@ public class ChessGame {
     public enum TeamColor {
         WHITE,
         BLACK,
-        NEUTRAL
     }
 
     @Override
@@ -71,6 +76,16 @@ public class ChessGame {
                 '}';
     }
 
+    private boolean testCandidateMove(ChessMove move) {
+        ChessGame testGame = new ChessGame(this);
+
+        ChessPiece movingPiece = testGame.getBoard().getPiece(move.getStartPosition());
+        testGame.getBoard().removePiece(move.getStartPosition());
+        testGame.getBoard().addPiece(move.getEndPosition(), movingPiece);
+
+        return ! isInCheck(movingPiece.getTeamColor());
+    }
+
     /**
      * Gets all valid moves for a piece at the given location
      *
@@ -80,15 +95,18 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         // Naive, I still need the idea of check to fix this
-//        if (currentBoard.getPiece(startPosition) == null) {
-//            return null;
-//        }
-//        HashSet<ChessMove> candidateMoves = (HashSet<ChessMove>) currentBoard.getPiece(startPosition).pieceMoves(currentBoard, startPosition);
-//
-//        for (ChessMove move : candidateMoves) {
-//
-//        }
-        throw new RuntimeException("Not implemented");
+        if (currentBoard.getPiece(startPosition) == null) {
+            return null;
+        }
+        HashSet<ChessMove> candidateMoves = (HashSet<ChessMove>) currentBoard.getPiece(startPosition).pieceMoves(currentBoard, startPosition);
+        HashSet<ChessMove> validMoves = new HashSet<ChessMove>();
+
+        for (ChessMove move : candidateMoves) {
+            if (testCandidateMove(move)) {
+                validMoves.add(move);
+            }
+        }
+        return validMoves;
     }
 
     /**
@@ -144,15 +162,18 @@ public class ChessGame {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece pieceToCheck = currentBoard.getPiece(new ChessPosition(i, j));
+
                 // In case of pawn promotion checks
                 if (pieceToCheck != null) {
+                    HashSet<ChessMove>movesToCheck = (HashSet<ChessMove>) pieceToCheck.pieceMoves(currentBoard, new ChessPosition(i, j));
+
                     for (PieceType promotionPiece : PieceType.values()) {
-                        if (validMoves(new ChessPosition(i, j)).contains(new ChessMove(new ChessPosition(i, j), kingPosition, promotionPiece))) {
+                        if (movesToCheck.contains(new ChessMove(new ChessPosition(i, j), kingPosition, promotionPiece))) {
                             return true;
                         }
                     }
                     // Normal checks
-                    if (validMoves(new ChessPosition(i, j)).contains(new ChessMove(new ChessPosition(i, j), kingPosition, null))) {
+                    if (movesToCheck.contains(new ChessMove(new ChessPosition(i, j), kingPosition, null))) {
                         return true;
                     }
                 }
@@ -193,7 +214,11 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        currentBoard = board;
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                currentBoard.addPiece(new ChessPosition(i,j), board.getPiece(new ChessPosition(i,j)));
+            }
+        }
     }
 
     /**

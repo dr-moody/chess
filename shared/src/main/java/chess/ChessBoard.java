@@ -26,8 +26,8 @@ public class ChessBoard {
         boardString.append("Chess Board:\n");
 
         // Need to iter through the rows backwards so it doesn't print upsidedown
-        for (int i = board.length -1; i >= 1; i--) {
-            for (ChessPiece square : Arrays.copyOfRange(board[i], 1, 9)) {
+        for (int i = board.length - 1; i >= 0; i--) {
+            for (ChessPiece square : Arrays.copyOfRange(board[i], 0, 8)) {
                 if (square != null) {
                     boardString.append(square.toString()).append(" ");
                 }
