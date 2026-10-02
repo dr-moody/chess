@@ -80,10 +80,15 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         // Naive, I still need the idea of check to fix this
-        if (currentBoard.getPiece(startPosition) == null) {
-            return null;
-        }
-        return currentBoard.getPiece(startPosition).pieceMoves(currentBoard, startPosition);
+//        if (currentBoard.getPiece(startPosition) == null) {
+//            return null;
+//        }
+//        HashSet<ChessMove> candidateMoves = (HashSet<ChessMove>) currentBoard.getPiece(startPosition).pieceMoves(currentBoard, startPosition);
+//
+//        for (ChessMove move : candidateMoves) {
+//
+//        }
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -164,15 +169,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-//        if (! isInCheck(teamColor)) {
-//            return false;
-//        } else {
-//            ChessPosition kingPosition = getKingPosition(teamColor);
-//            for (move : validMoves(kingPosition)) {
-//
-//            }
-//        }
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor) && validMoves(getKingPosition(teamColor)) == null) {
+            return true;
+        }
+        return false;
     }
 
 
