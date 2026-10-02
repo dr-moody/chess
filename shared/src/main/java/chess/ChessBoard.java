@@ -14,19 +14,12 @@ import static chess.ChessPiece.PieceType.*;
  */
 public class ChessBoard {
 
-    private final ChessPiece[][] board = new ChessPiece[9][9];
+    private final ChessPiece[][] board = new ChessPiece[8][8];
 
     public ChessBoard() {
 
-        for (ChessPiece[] row : board) {
-            row[0] = new ChessPiece(NEUTRAL, OUT_OF_BOUNDS);
-        }
-        for (ChessPiece square : board[0]) {
-            square = new ChessPiece(NEUTRAL, OUT_OF_BOUNDS);
-        }
+        resetBoard();
     }
-
-//    Currently the board prints upsidedown--I should fix this
 
     @Override
     public String toString() {
@@ -71,7 +64,11 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()][position.getColumn()] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
+    }
+
+    public void removePiece(ChessPosition position) {
+        addPiece(position, null);
     }
 
     /**
@@ -82,7 +79,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()][position.getColumn()];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
