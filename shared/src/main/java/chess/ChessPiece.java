@@ -129,7 +129,7 @@ public class ChessPiece {
                             movesList.add(new ChessMove(myPosition, target, QUEEN));
                         }
 
-                    } else if (myPosition.getColumn() != 8) {
+                    } if (myPosition.getColumn() != 8) {
                         ChessPosition target = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
                         if (board.getPiece(target) != null && board.getPiece(target).getTeamColor() != color) {
                             movesList.add(new ChessMove(myPosition, target, KNIGHT));
@@ -189,7 +189,7 @@ public class ChessPiece {
                             movesList.add(new ChessMove(myPosition, target, QUEEN));
                         }
 
-                    } else if (myPosition.getColumn() != 8) {
+                    } if (myPosition.getColumn() != 8) {
                         ChessPosition target = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
                         if (board.getPiece(target) != null && board.getPiece(target).getTeamColor() != color) {
                             movesList.add(new ChessMove(myPosition, target, KNIGHT));

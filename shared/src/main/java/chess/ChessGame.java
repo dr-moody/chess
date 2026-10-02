@@ -123,7 +123,7 @@ public class ChessGame {
             throw new InvalidMoveException("No Piece There To Move");
         }
         if (! validMoves(move.getStartPosition()).contains(move)) {
-            throw new InvalidMoveException("Invalid Move");
+            throw new InvalidMoveException("Invalid Move: " + move);
         }
         ChessPiece movingPiece = currentBoard.getPiece(move.getStartPosition());
         if (movingPiece.getTeamColor() != turn) {
