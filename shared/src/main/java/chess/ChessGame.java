@@ -109,6 +109,7 @@ public class ChessGame {
                 validMoves.add(move);
             }
         }
+
         return validMoves;
     }
 
@@ -205,7 +206,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (isInCheck(teamColor) && validMoves(getKingPosition(teamColor)) == null) {
+        if (isInCheck(teamColor) && validMoves(getKingPosition(teamColor)).isEmpty()) {
             return true;
         }
         return false;
