@@ -77,11 +77,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        try {
-            return board[position.getRow() - 1][position.getColumn() - 1];
-        } catch (Exception e) {
-            throw new RuntimeException(position.toString());
-        }
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**

@@ -87,8 +87,6 @@ public class ChessGame {
             testGame.getBoard().addPiece(move.getEndPosition(), new ChessPiece(movingPiece.getTeamColor(), move.getPromotionPiece()));
         }
 
-        System.out.print(testGame.getBoard().toString());
-
         return ! testGame.isInCheck(movingPiece.getTeamColor());
     }
 
@@ -107,7 +105,6 @@ public class ChessGame {
         HashSet<ChessMove> validMoves = new HashSet<ChessMove>();
 
         for (ChessMove move : candidateMoves) {
-            System.out.print((move.toString()+"\n"));
             if (testCandidateMove(move)) {
                 validMoves.add(move);
             }
