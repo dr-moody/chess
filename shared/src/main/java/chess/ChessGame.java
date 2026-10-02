@@ -79,6 +79,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        // Naive, I still need the idea of check to fix this
         if (currentBoard.getPiece(startPosition) == null) {
             return null;
         }
@@ -111,17 +112,25 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) {
+    private ChessPosition getKingPosition(TeamColor teamColor) {
         ChessPosition kingPosition = null;
 
+        outer:
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece pieceToCheck = currentBoard.getPiece(new ChessPosition(i, j));
                 if (pieceToCheck != null && pieceToCheck.getTeamColor() == teamColor && pieceToCheck.getPieceType() == KING) {
                     kingPosition = new ChessPosition(i, j);
+                    break outer;
                 }
             }
         }
+
+        return kingPosition;
+    }
+
+    public boolean isInCheck(TeamColor teamColor) {
+        ChessPosition kingPosition = getKingPosition(teamColor);
 
         if (kingPosition == null) {
             throw new RuntimeException("Missing " + teamColor.toString() + " King");
@@ -131,14 +140,16 @@ public class ChessGame {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece pieceToCheck = currentBoard.getPiece(new ChessPosition(i, j));
                 // In case of pawn promotion checks
-                for (PieceType promotionPiece : PieceType.values()) {
-                    if (validMoves(new ChessPosition(i, j)).contains(new ChessMove(new ChessPosition(i, j), kingPosition, promotionPiece))) {
+                if (pieceToCheck != null) {
+                    for (PieceType promotionPiece : PieceType.values()) {
+                        if (validMoves(new ChessPosition(i, j)).contains(new ChessMove(new ChessPosition(i, j), kingPosition, promotionPiece))) {
+                            return true;
+                        }
+                    }
+                    // Normal checks
+                    if (validMoves(new ChessPosition(i, j)).contains(new ChessMove(new ChessPosition(i, j), kingPosition, null))) {
                         return true;
                     }
-                }
-                // Normal checks
-                if (validMoves(new ChessPosition(i, j)).contains(new ChessMove(new ChessPosition(i, j), kingPosition, null))) {
-                    return true;
                 }
             }
         }
@@ -153,6 +164,14 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+//        if (! isInCheck(teamColor)) {
+//            return false;
+//        } else {
+//            ChessPosition kingPosition = getKingPosition(teamColor);
+//            for (move : validMoves(kingPosition)) {
+//
+//            }
+//        }
         throw new RuntimeException("Not implemented");
     }
 
