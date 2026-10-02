@@ -19,6 +19,7 @@ public class ChessGame {
     public ChessGame() {
         turn = WHITE;
         currentBoard = new ChessBoard();
+        currentBoard.resetBoard();
     }
 
     public ChessGame(ChessGame other) {
