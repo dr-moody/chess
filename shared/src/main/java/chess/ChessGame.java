@@ -81,9 +81,15 @@ public class ChessGame {
 
         ChessPiece movingPiece = testGame.getBoard().getPiece(move.getStartPosition());
         testGame.getBoard().removePiece(move.getStartPosition());
-        testGame.getBoard().addPiece(move.getEndPosition(), movingPiece);
+        if (move.getPromotionPiece() == null) {
+            testGame.getBoard().addPiece(move.getEndPosition(), movingPiece);
+        } else {
+            testGame.getBoard().addPiece(move.getEndPosition(), new ChessPiece(movingPiece.getTeamColor(), move.getPromotionPiece()));
+        }
 
-        return ! isInCheck(movingPiece.getTeamColor());
+        System.out.print(testGame.getBoard().toString());
+
+        return ! testGame.isInCheck(movingPiece.getTeamColor());
     }
 
     /**
@@ -94,7 +100,6 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        // Naive, I still need the idea of check to fix this
         if (currentBoard.getPiece(startPosition) == null) {
             return null;
         }
@@ -102,6 +107,7 @@ public class ChessGame {
         HashSet<ChessMove> validMoves = new HashSet<ChessMove>();
 
         for (ChessMove move : candidateMoves) {
+            System.out.print((move.toString()+"\n"));
             if (testCandidateMove(move)) {
                 validMoves.add(move);
             }
@@ -125,7 +131,11 @@ public class ChessGame {
         else {
             ChessPiece movingPiece = currentBoard.getPiece(move.getStartPosition());
             currentBoard.removePiece(move.getStartPosition());
-            currentBoard.addPiece(move.getEndPosition(), movingPiece);
+            if (move.getPromotionPiece() == null) {
+                currentBoard.addPiece(move.getEndPosition(), movingPiece);
+            } else {
+                currentBoard.addPiece(move.getEndPosition(), new ChessPiece(movingPiece.getTeamColor(), move.getPromotionPiece()));
+            }
         }
     }
 
