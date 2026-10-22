@@ -76,6 +76,10 @@ class ServiceTest {
         int gameID = Integer.parseInt(gameResponse.get("gameID"));
 
         assertNotNull(myService.serviceGameDAO.getGame(gameID));
+
+        ServiceResponse phonyCreateResponse = myService.createGame(Service.generateToken(), "dead");
+
+        assert(Objects.equals(phonyCreateResponse.get("message"), "Error: unauthorized"));
     }
 
     @Test
@@ -100,5 +104,9 @@ class ServiceTest {
         myService.joinGame(authToken, ChessGame.TeamColor.WHITE, gameID);
 
         assert(Objects.equals(myService.serviceGameDAO.getGame(gameID).whiteUsername(), "adam"));
+
+        ServiceResponse phonyJoinResponse = myService.joinGame(Service.generateToken(), ChessGame.TeamColor.WHITE, 0);
+
+        assert(Objects.equals(phonyJoinResponse.get("message"), "Error: unauthorized"));
     }
 }
