@@ -25,6 +25,10 @@ class ServiceTest {
         myService.register(new UserData("adam","1234","abc@gmail.com"));
 
         assertNotNull(myService.serviceUserDAO.getUser("adam"));
+
+        ServiceResponse response = myService.register(new UserData("adam", "password", "123@gmail.com"));
+
+        assert(Objects.equals(response.get("message"), "Error: already taken"));
     }
 
     @Test
@@ -38,6 +42,14 @@ class ServiceTest {
 
         assertNotNull(myService.serviceAuthDAO.verifyAuth(loginAuthToken));
 
+        ServiceResponse phonyLoginResponse = myService.login(new UserData("phil", "hercules", "not@not.com"));
+
+        assert(Objects.equals(phonyLoginResponse.get("message"), "Error: bad request"));
+
+        ServiceResponse wrongLoginResponse = myService.login(new UserData("adam","123456",null));
+
+        assert(Objects.equals(wrongLoginResponse.get("message"), "Error: unauthorized"));
+
 
     }
 
@@ -49,6 +61,10 @@ class ServiceTest {
         myService.logout(authToken);
 
         assertNull(myService.serviceAuthDAO.verifyAuth(authToken));
+
+        ServiceResponse phonyLogoutResponse = myService.logout(authToken);
+
+        assert(Objects.equals(phonyLogoutResponse.get("message"), "Error: unauthorized"));
     }
 
     @Test
