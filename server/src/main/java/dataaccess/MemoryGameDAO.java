@@ -2,13 +2,11 @@ package dataaccess;
 
 import model.GameData;
 
-import java.time.DateTimeException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 public class MemoryGameDAO implements GameDAO {
-    HashSet<GameData> gameDataList = new HashSet<>();
+    ArrayList<GameData> gameDataList = new ArrayList<>();
 
     @Override
     public void clear() {
@@ -28,9 +26,9 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public boolean updateGame(GameData game) {
-        for (GameData g : gameDataList) {
-            if (g.gameID() == game.gameID()) {
-                g = game;
+        for (int i = 0; i <= gameDataList.size(); i++) {
+            if (gameDataList.get(i).gameID() == game.gameID()) {
+                gameDataList.set(i, game);
                 return true;
             }
         }
