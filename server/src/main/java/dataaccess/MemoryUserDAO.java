@@ -30,12 +30,12 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username) {
         for (UserData u : userDataList) {
             if (Objects.equals(u.username(), username)) {
                 return u;
             }
         }
-        throw new DataAccessException("user not found");
+        return null;
     }
 }

@@ -16,34 +16,35 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void createGame(GameData game) throws DataAccessException {
+    public boolean createGame(GameData game) {
         for (GameData g : gameDataList) {
             if (g.gameID() == game.gameID()) {
-                throw new DataAccessException("game already exists");
+                return false;
             }
         }
         gameDataList.add(game);
+        return true;
     }
 
     @Override
-    public void updateGame(GameData game) throws DataAccessException {
+    public boolean updateGame(GameData game) {
         for (GameData g : gameDataList) {
             if (g.gameID() == game.gameID()) {
                 g = game;
-                break;
+                return true;
             }
         }
-        throw new DataAccessException("game not found");
+        return false;
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException {
+    public GameData getGame(int gameID) {
         for (GameData g : gameDataList) {
             if (g.gameID() == gameID) {
                 return g;
             }
         }
-        throw new DataAccessException("game not found");
+        return null;
     }
 
     @Override

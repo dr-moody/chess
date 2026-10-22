@@ -26,4 +26,14 @@ public class MemoryAuthDAO implements AuthDAO{
 
         throw new DataAccessException("authToken not found");
     }
+
+    @Override
+    public String verifyAuth(String authToken) {
+        for (AuthData auth : authDataList) {
+            if (Objects.equals(auth.authToken(), authToken)) {
+                return auth.username();
+            }
+        }
+        return null;
+    }
 }

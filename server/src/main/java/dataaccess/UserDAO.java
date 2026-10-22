@@ -6,6 +6,6 @@ public interface UserDAO {
     void clear();
     void deleteUser(String username) throws DataAccessException;
     void createUser(UserData user);
-    UserData getUser(String username) throws DataAccessException;
+    UserData getUser(String username);
 
 }
