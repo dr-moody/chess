@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceResponse {
-    Map<String, String> body = new HashMap<>();
+    public Map<String, String> body = new HashMap<>();
 
     public ServiceResponse(String content) {
         String[] pairs = content.split(",");

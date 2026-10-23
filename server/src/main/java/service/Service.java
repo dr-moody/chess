@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
@@ -44,6 +45,8 @@ public class Service {
 
         if (serviceUserDAO.getUser(RegisterRequest.username()) != null) {
             return new ServiceResponse("status code:403,message:Error: already taken");
+        } else if (RegisterRequest.password() == null) {
+            return new ServiceResponse("status code:400,message:Error: invalid password");
         }
 
         serviceUserDAO.createUser(RegisterRequest);
@@ -55,9 +58,9 @@ public class Service {
 
     public ServiceResponse login(UserData LoginRequest) {
         UserData user = serviceUserDAO.getUser(LoginRequest.username());
-        if (user == null) {
+        if (LoginRequest.username() == null || LoginRequest.password() == null) {
             return new ServiceResponse("status code:400,message:Error: bad request");
-        } else if (!Objects.equals(user.password(), LoginRequest.password())) {
+        } else if (user == null || !Objects.equals(user.password(), LoginRequest.password())) {
             return new ServiceResponse("status code:401,message:Error: unauthorized");
         }
         String authToken = generateToken();
@@ -66,10 +69,10 @@ public class Service {
     }
 
     public ServiceResponse logout(String authToken) {
-        try {
-            serviceAuthDAO.deleteAuth(authToken);
+        if (serviceAuthDAO.deleteAuth(authToken)) {
             return new ServiceResponse("status code:200");
-        } catch (DataAccessException e) {
+        }
+        else {
             return new ServiceResponse("status code:401,message:Error: unauthorized");
         }
     }
@@ -78,7 +81,7 @@ public class Service {
         if (serviceAuthDAO.verifyAuth(authToken) == null) {
             return new ServiceResponse("status code:401,message:Error: unauthorized");
         }
-        String gamesValue = serviceGameDAO.getAllGames().toString();
+        String gamesValue = new Gson().toJson(serviceGameDAO.getAllGames());
         return new ServiceResponse("status code:200,games:"+gamesValue);
     }
 

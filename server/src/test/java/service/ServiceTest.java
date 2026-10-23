@@ -44,11 +44,11 @@ class ServiceTest {
 
         ServiceResponse phonyLoginResponse = myService.login(new UserData("phil", "hercules", "not@not.com"));
 
-        assert(Objects.equals(phonyLoginResponse.get("message"), "Error: bad request"));
+        assert(Objects.equals(phonyLoginResponse.get("message"), "Error: unauthorized"));
 
-        ServiceResponse wrongLoginResponse = myService.login(new UserData("adam","123456",null));
+        ServiceResponse wrongLoginResponse = myService.login(new UserData(null,"123456",null));
 
-        assert(Objects.equals(wrongLoginResponse.get("message"), "Error: unauthorized"));
+        assert(Objects.equals(wrongLoginResponse.get("message"), "Error: bad request"));
 
 
     }

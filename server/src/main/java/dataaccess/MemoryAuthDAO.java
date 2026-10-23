@@ -2,11 +2,11 @@ package dataaccess;
 
 import model.AuthData;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MemoryAuthDAO implements AuthDAO{
-    HashSet<AuthData> authDataList = new HashSet<>();
+    ArrayList<AuthData> authDataList = new ArrayList<>();
 
     @Override
     public void clear() {
@@ -19,12 +19,14 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException {
-        if (authDataList.stream().anyMatch(a -> Objects.equals(a.authToken(), authToken))) {
-            authDataList.removeIf(u -> Objects.equals(u.authToken(), authToken));
+    public boolean deleteAuth(String authToken) {
+        for (int i = 0; i < authDataList.size(); i++) {
+            if (Objects.equals(authDataList.get(i).authToken(), authToken)) {
+                authDataList.remove(i);
+                return true;
+            }
         }
-
-        throw new DataAccessException("authToken not found");
+        return false;
     }
 
     @Override
