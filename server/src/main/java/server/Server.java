@@ -38,12 +38,19 @@ public class Server {
 
     private void joinGame(Context ctx) {
         String authToken = ctx.header("authorization");
-        Map<String, String> body = new Gson().fromJson(ctx.body(), Map.class);
-        ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(body.get("PlayerColor"));
-        int gameID = Integer.parseInt(body.get("gameID"));
+        Map<String, String> bodyString = new Gson().fromJson(ctx.body(), Map.class);
+        try {
+            ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(bodyString.get("playerColor"));
+            Map<String, Double> bodyDouble = new Gson().fromJson(ctx.body(), Map.class);
+            int gameID = bodyDouble.get("gameID").intValue();
 
-        ServiceResponse response = service.joinGame(authToken, color, gameID);
-        ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(response.body));
+            ServiceResponse response = service.joinGame(authToken, color, gameID);
+            ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(response.body));
+        }
+        catch (Exception e) {
+            ctx.status(400).result(new Gson().toJson(new ServiceResponse("message:Error bad request").body));
+        }
+
     }
 
     private void createGame(Context ctx) {

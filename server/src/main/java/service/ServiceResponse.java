@@ -12,7 +12,7 @@ public class ServiceResponse {
         for (String pair : pairs) {
             String[] parts = pair.split(":",2);
             String key = parts[0];
-            String value = parts[1];
+            String value = parts[1].replace("*",",");
 
             body.put(key, value);
         }

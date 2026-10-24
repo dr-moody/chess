@@ -81,7 +81,7 @@ public class Service {
         if (serviceAuthDAO.verifyAuth(authToken) == null) {
             return new ServiceResponse("status code:401,message:Error: unauthorized");
         }
-        String gamesValue = new Gson().toJson(serviceGameDAO.getAllGames());
+        String gamesValue = new Gson().toJson(serviceGameDAO.getAllGames()).replace(",","*");
         return new ServiceResponse("status code:200,games:"+gamesValue);
     }
 
@@ -111,6 +111,12 @@ public class Service {
 
         if (game == null) {
             return new ServiceResponse("status code:400,message:Error: bad request");
+        }
+
+        if ((game.whiteUsername() != null && playerColor == ChessGame.TeamColor.WHITE) ||
+                (game.blackUsername() != null && playerColor == ChessGame.TeamColor.BLACK)
+        ) {
+            return new ServiceResponse("status code:403,message:Error: already taken");
         }
 
         String username = serviceAuthDAO.verifyAuth(authToken);
