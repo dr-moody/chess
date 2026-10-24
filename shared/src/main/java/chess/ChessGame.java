@@ -181,18 +181,20 @@ public class ChessGame {
                 ChessPiece pieceToCheck = currentBoard.getPiece(new ChessPosition(i, j));
 
                 // In case of pawn promotion checks
-                if (pieceToCheck != null) {
-                    HashSet<ChessMove>movesToCheck = (HashSet<ChessMove>) pieceToCheck.pieceMoves(currentBoard, new ChessPosition(i, j));
+                if (pieceToCheck == null) {
+                    continue;
+                }
 
-                    for (PieceType promotionPiece : PieceType.values()) {
-                        if (movesToCheck.contains(new ChessMove(new ChessPosition(i, j), kingPosition, promotionPiece))) {
-                            return true;
-                        }
-                    }
-                    // Normal checks
-                    if (movesToCheck.contains(new ChessMove(new ChessPosition(i, j), kingPosition, null))) {
+                HashSet<ChessMove> movesToCheck = (HashSet<ChessMove>) pieceToCheck.pieceMoves(currentBoard, new ChessPosition(i, j));
+
+                for (PieceType promotionPiece : PieceType.values()) {
+                    if (movesToCheck.contains(new ChessMove(new ChessPosition(i, j), kingPosition, promotionPiece))) {
                         return true;
                     }
+                }
+                // Normal checks
+                if (movesToCheck.contains(new ChessMove(new ChessPosition(i, j), kingPosition, null))) {
+                    return true;
                 }
             }
         }
