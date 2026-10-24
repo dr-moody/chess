@@ -12,6 +12,7 @@ import service.ServiceResponse;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 public class Server {
 
@@ -66,10 +67,15 @@ public class Server {
         String authToken = ctx.header("authorization");
         ServiceResponse response = service.listGames(authToken);
 
-        ArrayList<GameData> gamesList = new Gson().fromJson(response.get("games"), ArrayList.class);
-        Map<String, ArrayList<GameData>> gamesMap = Map.of("games", gamesList);
+        if (Objects.equals(response.get("status code"), "200")) {
+            ArrayList<GameData> gamesList = new Gson().fromJson(response.get("games"), ArrayList.class);
+            Map<String, ArrayList<GameData>> gamesMap = Map.of("games", gamesList);
 
-        ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(gamesMap));
+            ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(gamesMap));
+        } else {
+            ServiceResponse serverResponse = new ServiceResponse("message:Error: unauthorized");
+            ctx.status(401).result(new Gson().toJson(response.body));
+        }
     }
 
     private void logout(Context ctx) {
