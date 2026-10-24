@@ -1,5 +1,6 @@
 package chess;
 
+import javax.management.AttributeList;
 import java.util.*;
 
 import static chess.ChessGame.TeamColor;
@@ -88,6 +89,16 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
 
+    public Collection<ChessMove> moveLister (ChessPosition myPosition, ChessPosition target) {
+        HashSet<ChessMove> movesList = new HashSet<>();
+        movesList.add(new ChessMove(myPosition, target, KNIGHT));
+        movesList.add(new ChessMove(myPosition, target, ROOK));
+        movesList.add(new ChessMove(myPosition, target, BISHOP));
+        movesList.add(new ChessMove(myPosition, target, QUEEN));
+
+        return movesList;
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> movesList = new HashSet<ChessMove>();
 
@@ -107,10 +118,7 @@ public class ChessPiece {
                     ChessPosition target1 = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
 
                     if (board.getPiece(target1) == null) {
-                        movesList.add(new ChessMove(myPosition, target1, KNIGHT));
-                        movesList.add(new ChessMove(myPosition, target1, ROOK));
-                        movesList.add(new ChessMove(myPosition, target1, BISHOP));
-                        movesList.add(new ChessMove(myPosition, target1, QUEEN));
+                        movesList.addAll(moveLister(myPosition, target1));
                     }
                 } else {
                     ChessPosition target1 = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
@@ -123,19 +131,13 @@ public class ChessPiece {
                     if (myPosition.getColumn() != 1) {
                         ChessPosition target = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
                         if (board.getPiece(target) != null && board.getPiece(target).getTeamColor() != color) {
-                            movesList.add(new ChessMove(myPosition, target, KNIGHT));
-                            movesList.add(new ChessMove(myPosition, target, ROOK));
-                            movesList.add(new ChessMove(myPosition, target, BISHOP));
-                            movesList.add(new ChessMove(myPosition, target, QUEEN));
+                            movesList.addAll(moveLister(myPosition, target));
                         }
 
                     } if (myPosition.getColumn() != 8) {
                         ChessPosition target = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
                         if (board.getPiece(target) != null && board.getPiece(target).getTeamColor() != color) {
-                            movesList.add(new ChessMove(myPosition, target, KNIGHT));
-                            movesList.add(new ChessMove(myPosition, target, ROOK));
-                            movesList.add(new ChessMove(myPosition, target, BISHOP));
-                            movesList.add(new ChessMove(myPosition, target, QUEEN));
+                            movesList.addAll(moveLister(myPosition, target));
                         }
                     }
                 } else {
@@ -167,10 +169,7 @@ public class ChessPiece {
                     ChessPosition target1 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
 
                     if (board.getPiece(target1) == null) {
-                        movesList.add(new ChessMove(myPosition, target1, KNIGHT));
-                        movesList.add(new ChessMove(myPosition, target1, ROOK));
-                        movesList.add(new ChessMove(myPosition, target1, BISHOP));
-                        movesList.add(new ChessMove(myPosition, target1, QUEEN));
+                        movesList.addAll(moveLister(myPosition, target1));
                     }
                 } else {
                     ChessPosition target1 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
@@ -183,19 +182,13 @@ public class ChessPiece {
                     if (myPosition.getColumn() != 1) {
                         ChessPosition target = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
                         if (board.getPiece(target) != null && board.getPiece(target).getTeamColor() != color) {
-                            movesList.add(new ChessMove(myPosition, target, KNIGHT));
-                            movesList.add(new ChessMove(myPosition, target, ROOK));
-                            movesList.add(new ChessMove(myPosition, target, BISHOP));
-                            movesList.add(new ChessMove(myPosition, target, QUEEN));
+                            movesList.addAll(moveLister(myPosition, target));
                         }
 
                     } if (myPosition.getColumn() != 8) {
                         ChessPosition target = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
                         if (board.getPiece(target) != null && board.getPiece(target).getTeamColor() != color) {
-                            movesList.add(new ChessMove(myPosition, target, KNIGHT));
-                            movesList.add(new ChessMove(myPosition, target, ROOK));
-                            movesList.add(new ChessMove(myPosition, target, BISHOP));
-                            movesList.add(new ChessMove(myPosition, target, QUEEN));
+                            movesList.addAll(moveLister(myPosition, target));
                         }
                     }
                 } else {
