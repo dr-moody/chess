@@ -10,6 +10,7 @@ import service.Service;
 import service.ServiceResponse;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Server {
 
@@ -43,12 +44,11 @@ public class Server {
     private void listGames(Context ctx) {
         String authToken = ctx.header("authorization");
         ServiceResponse response = service.listGames(authToken);
-        System.out.println(response.get("games"));
 
         ArrayList<GameData> gamesList = new Gson().fromJson(response.get("games"), ArrayList.class);
+        Map<String, ArrayList<GameData>> gamesMap = Map.of("games", gamesList);
 
-        System.out.println(response.get("games").getClass());
-        ctx.status(Integer.parseInt(response.get("status code"))).json(gamesList);
+        ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(gamesMap));
     }
 
     private void logout(Context ctx) {
