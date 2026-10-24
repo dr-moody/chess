@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
@@ -36,9 +37,22 @@ public class Server {
     }
 
     private void joinGame(Context ctx) {
+        String authToken = ctx.header("authorization");
+        Map<String, String> body = new Gson().fromJson(ctx.body(), Map.class);
+        ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(body.get("PlayerColor"));
+        int gameID = Integer.parseInt(body.get("gameID"));
+
+        ServiceResponse response = service.joinGame(authToken, color, gameID);
+        ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(response.body));
     }
 
     private void createGame(Context ctx) {
+        String authToken = ctx.header("authorization");
+        Map<String, String> body = new Gson().fromJson(ctx.body(), Map.class);
+        String gameName = body.get("gameName");
+
+        ServiceResponse response = service.createGame(authToken, gameName);
+        ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(response.body));
     }
 
     private void listGames(Context ctx) {

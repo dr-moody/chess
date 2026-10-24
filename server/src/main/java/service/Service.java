@@ -88,9 +88,11 @@ public class Service {
     public ServiceResponse createGame(String authToken, String gameName) {
         if (serviceAuthDAO.verifyAuth(authToken) == null) {
             return new ServiceResponse("status code:401,message:Error: unauthorized");
+        } else if (gameName == null) {
+            return new ServiceResponse("status code:400,message:Error: bad request");
         }
 
-        int i = 0;
+        int i = 1;
         while (serviceGameDAO.getGame(i) != null) {
             i++;
         }
