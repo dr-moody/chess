@@ -17,13 +17,13 @@ public class Service {
     GameDAO serviceGameDAO;
     UserDAO serviceUserDAO;
 
-    public Service (String DAOType) {
-        if (Objects.equals(DAOType, "Memory")) {
+    public Service (String daoType) {
+        if (Objects.equals(daoType, "Memory")) {
             serviceAuthDAO = new MemoryAuthDAO();
             serviceGameDAO = new MemoryGameDAO();
             serviceUserDAO = new MemoryUserDAO();
 
-        } else if (Objects.equals(DAOType, "SQL")) {
+        } else if (Objects.equals(daoType, "SQL")) {
             serviceAuthDAO = null;
             serviceGameDAO = null;
             serviceUserDAO = null;
@@ -41,31 +41,31 @@ public class Service {
         return new ServiceResponse("status code:200");
     }
 
-    public ServiceResponse register(UserData RegisterRequest) {
+    public ServiceResponse register(UserData registerRequest) {
 
-        if (serviceUserDAO.getUser(RegisterRequest.username()) != null) {
+        if (serviceUserDAO.getUser(registerRequest.username()) != null) {
             return new ServiceResponse("status code:403,message:Error: already taken");
-        } else if (RegisterRequest.password() == null) {
+        } else if (registerRequest.password() == null) {
             return new ServiceResponse("status code:400,message:Error: invalid password");
         }
 
-        serviceUserDAO.createUser(RegisterRequest);
+        serviceUserDAO.createUser(registerRequest);
         String authToken = generateToken();
-        serviceAuthDAO.createAuth(new AuthData(authToken, RegisterRequest.username()));
-        return new ServiceResponse("status code:200,username:"+RegisterRequest.username()+",authToken:"+authToken);
+        serviceAuthDAO.createAuth(new AuthData(authToken, registerRequest.username()));
+        return new ServiceResponse("status code:200,username:"+registerRequest.username()+",authToken:"+authToken);
 
     }
 
-    public ServiceResponse login(UserData LoginRequest) {
-        UserData user = serviceUserDAO.getUser(LoginRequest.username());
-        if (LoginRequest.username() == null || LoginRequest.password() == null) {
+    public ServiceResponse login(UserData loginRequest) {
+        UserData user = serviceUserDAO.getUser(loginRequest.username());
+        if (loginRequest.username() == null || loginRequest.password() == null) {
             return new ServiceResponse("status code:400,message:Error: bad request");
-        } else if (user == null || !Objects.equals(user.password(), LoginRequest.password())) {
+        } else if (user == null || !Objects.equals(user.password(), loginRequest.password())) {
             return new ServiceResponse("status code:401,message:Error: unauthorized");
         }
         String authToken = generateToken();
-        serviceAuthDAO.createAuth(new AuthData(authToken, LoginRequest.username()));
-        return new ServiceResponse("status code:200,username:"+LoginRequest.username()+",authToken:"+authToken);
+        serviceAuthDAO.createAuth(new AuthData(authToken, loginRequest.username()));
+        return new ServiceResponse("status code:200,username:"+loginRequest.username()+",authToken:"+authToken);
     }
 
     public ServiceResponse logout(String authToken) {

@@ -15,16 +15,6 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void deleteUser(String username) throws DataAccessException {
-        if (userDataList.stream().anyMatch(u -> Objects.equals(u.username(), username))) {
-            userDataList.removeIf(u -> Objects.equals(u.username(), username));
-        }
-
-        throw new DataAccessException("user not found");
-
-    }
-
-    @Override
     public void createUser(UserData user) {
         userDataList.add(user);
     }

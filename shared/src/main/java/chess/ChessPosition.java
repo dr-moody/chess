@@ -13,9 +13,9 @@ public class ChessPosition {
     private final int row;
     private final int column;
 
-    public ChessPosition(int arg_row, int arg_col) {
-        column = arg_col;
-        row = arg_row;
+    public ChessPosition(int argRow, int argCol) {
+        column = argCol;
+        row = argRow;
     }
 
     @Override
