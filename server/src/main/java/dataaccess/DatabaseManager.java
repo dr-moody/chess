@@ -14,16 +14,40 @@ public class DatabaseManager {
      */
     static {
         loadPropertiesFromResources();
+        createDatabase(); // We'll handle this in the Server if "SQL" is passed in
     }
 
     /**
      * Creates the database if it does not already exist.
      */
     static public void createDatabase() throws DataAccessException {
-        var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
-             var preparedStatement = conn.prepareStatement(statement)) {
-            preparedStatement.executeUpdate();
+        try {
+            var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
+            var statement = conn.createStatement();
+            statement.execute("CREATE DATABASE IF NOT EXISTS " + databaseName);
+            statement.execute("""
+                CREATE TABLE IF NOT EXISTS user (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT,
+                    email TEXT,
+                    password TEXT
+                )
+                """);
+            statement.execute("""
+                CREATE TABLE IF NOT EXISTS auth (
+                    authtoken TEXT,
+                    username TEXT
+                )
+                """);
+            statement.execute("""
+                CREATE TABLE IF NOT EXISTS game (
+                    gameID INTEGER,
+                    whiteUsername TEXT,
+                    blackUsername TEXT,
+                    gameName TEXT,
+                    game TEXT
+                )
+                """);
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create database", ex);
         }
