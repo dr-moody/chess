@@ -25,6 +25,10 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) {
-        HashMap<String, String> userMap = DatabaseManager.selectOne("SELECT * FROM user WHERE")
+        HashMap<String, String> userMap = DatabaseManager.selectOne("SELECT * FROM user WHERE username = " + username);
+        if (userMap != null) {
+            return new UserData(userMap.get("username"), userMap.get("email"), userMap.get("password"));
+        }
+        return null;
     }
 }
