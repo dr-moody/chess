@@ -1,6 +1,8 @@
 package dataaccess;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class DatabaseManager {
@@ -14,20 +16,18 @@ public class DatabaseManager {
      */
     static {
         loadPropertiesFromResources();
-        createDatabase(); // We'll handle this in the Server if "SQL" is passed in
+        createDatabase(); // We'll handle this in the Service if "SQL" is passed in
     }
 
     /**
      * Creates the database if it does not already exist.
      */
-    static public void createDatabase() throws DataAccessException {
-        try {
-            var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
+    static public void createDatabase() {
+        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);) {
             var statement = conn.createStatement();
             statement.execute("CREATE DATABASE IF NOT EXISTS " + databaseName);
             statement.execute("""
-                CREATE TABLE IF NOT EXISTS user (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                CREATE TABLE IF NOT EXISTS users (
                     username TEXT,
                     email TEXT,
                     password TEXT
@@ -49,7 +49,7 @@ public class DatabaseManager {
                 )
                 """);
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to create database", ex);
+            System.out.println(ex);
         }
     }
 
@@ -97,5 +97,63 @@ public class DatabaseManager {
         var host = props.getProperty("db.host");
         var port = Integer.parseInt(props.getProperty("db.port"));
         connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
+    }
+
+    public static void execute(String sqlBlock) {
+        try (var conn = DatabaseManager.getConnection();) {
+            var statement = conn.createStatement();
+            statement.execute(sqlBlock);
+        } catch (SQLException | DataAccessException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static void executeWithValues(String sqlBlock, ArrayList<String> values) {
+        try (var conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sqlBlock)) {
+            for (int i = 0; i < values.size(); i++) {
+                ps.setString(i, values.get(i));
+            }
+            ps.executeUpdate();
+        } catch (SQLException | DataAccessException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static HashMap<String, String> selectOne(String sqlBlock) {
+        try (var conn = DatabaseManager.getConnection();) {
+            var statement = conn.prepareStatement(sqlBlock);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            return mapify(rs);
+        } catch (SQLException | DataAccessException ex) {
+            System.out.println(ex);
+            return null;
+        }
+    }
+
+    public static ArrayList<HashMap<String, String>> selectAll(String sqlBlock) {
+        ArrayList<HashMap<String, String>> rsList = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection();) {
+            var statement = conn.prepareStatement(sqlBlock);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                rsList.add(mapify(rs));
+            }
+            return rsList;
+        } catch (SQLException | DataAccessException ex) {
+            System.out.println(ex);
+            return rsList;
+        }
+    }
+
+    private static HashMap<String, String> mapify(ResultSet rs) throws SQLException {
+        ResultSetMetaData fields = rs.getMetaData();
+        HashMap<String, String> object = new HashMap<>();
+
+        for (int i = 1; i <= fields.getColumnCount(); i++) {
+            object.put(fields.getColumnLabel(i), rs.getString(i));
+        }
+
+        return object;
     }
 }

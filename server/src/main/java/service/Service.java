@@ -7,8 +7,6 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import javax.xml.crypto.Data;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,9 +22,10 @@ public class Service {
             serviceUserDAO = new MemoryUserDAO();
 
         } else if (Objects.equals(daoType, "SQL")) {
-            serviceAuthDAO = null;
-            serviceGameDAO = null;
-            serviceUserDAO = null;
+            serviceAuthDAO = new SQLAuthDAO();
+            serviceGameDAO = new SQLGameDAO();
+            serviceUserDAO = new SQLUserDAO();
+
         }
     }
 
