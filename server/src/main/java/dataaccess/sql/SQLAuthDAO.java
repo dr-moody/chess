@@ -1,12 +1,15 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import model.AuthData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SQLAuthDAO implements AuthDAO{
+public class SQLAuthDAO implements AuthDAO {
     @Override
     public void clear() throws DataAccessException {
         DatabaseManager.execute("DELETE FROM auth");

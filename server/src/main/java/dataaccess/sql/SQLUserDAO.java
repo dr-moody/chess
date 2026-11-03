@@ -1,6 +1,8 @@
-package dataaccess;
+package dataaccess.sql;
 
-import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
+import dataaccess.UserDAO;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
