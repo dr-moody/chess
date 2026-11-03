@@ -24,7 +24,8 @@ public class SQLGameDAO implements GameDAO {
             values.add(game.gameName());
             values.add(gameJson);
 
-            DatabaseManager.executeWithValues("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)", values);
+            String sqlBlock = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+            DatabaseManager.executeWithValues(sqlBlock, values);
         }
         return false;
     }
@@ -58,7 +59,15 @@ public class SQLGameDAO implements GameDAO {
                 continue;
             }
             ChessGame game = new Gson().fromJson(gameMap.get("game"), ChessGame.class);
-            gamesList.add(new GameData(Integer.parseInt(gameMap.get("gameID")), gameMap.get("whiteUsername"), gameMap.get("blackUsername"), gameMap.get("gameName"), game));
+            gamesList.add(
+                    new GameData(
+                            Integer.parseInt(gameMap.get("gameID")),
+                            gameMap.get("whiteUsername"),
+                            gameMap.get("blackUsername"),
+                            gameMap.get("gameName"),
+                            game
+                    )
+            );
         }
 
         return gamesList;
