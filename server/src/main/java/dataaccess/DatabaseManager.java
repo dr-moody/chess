@@ -16,7 +16,7 @@ public class DatabaseManager {
      */
     static {
         loadPropertiesFromResources();
-        createDatabase(); // We'll handle this in the Service if "SQL" is passed in
+        createDatabase();
     }
 
     /**
@@ -25,28 +25,30 @@ public class DatabaseManager {
     static public void createDatabase() {
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);) {
             var statement = conn.createStatement();
-            statement.execute("CREATE DATABASE IF NOT EXISTS " + databaseName);
-            statement.execute("""
+            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + databaseName);
+            conn.setCatalog(databaseName);
+            var updatedStatement = conn.createStatement();
+            updatedStatement.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS users (
                     username TEXT,
                     email TEXT,
                     password TEXT
-                )
+                );
                 """);
-            statement.execute("""
+            updatedStatement.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS auth (
                     authtoken TEXT,
                     username TEXT
-                )
+                );
                 """);
-            statement.execute("""
+            updatedStatement.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS game (
-                    gameID INTEGER,
+                    gameID INT,
                     whiteUsername TEXT,
                     blackUsername TEXT,
                     gameName TEXT,
                     game TEXT
-                )
+                );
                 """);
         } catch (SQLException ex) {
             System.out.println(ex);

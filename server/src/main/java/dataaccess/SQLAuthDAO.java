@@ -18,16 +18,16 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public boolean deleteAuth(String authToken) {
-        if (null == DatabaseManager.selectOne("SELECT * FROM auth WHERE authtoken = " + authToken)) {
+        if (null == DatabaseManager.selectOne("SELECT * FROM auth WHERE authtoken = " + authToken + "'")) {
             return false;
         }
-        DatabaseManager.execute("DELETE FROM auth WHERE authtoken = " + authToken);
+        DatabaseManager.execute("DELETE FROM auth WHERE authtoken = " + authToken + "'");
         return true;
     }
 
     @Override
     public String verifyAuth(String authToken) {
-        HashMap<String, String> authMap = DatabaseManager.selectOne("SELECT * FROM auth WHERE authtoken = " + authToken);
+        HashMap<String, String> authMap = DatabaseManager.selectOne("SELECT * FROM auth WHERE authtoken = '" + authToken + "'");
         if (authMap == null) {
             return null;
         }

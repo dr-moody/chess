@@ -13,7 +13,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void createUser(UserData user) {
-        if (null != DatabaseManager.selectOne("SELECT * FROM users WHERE username = " + user.username())) {
+        if (null == DatabaseManager.selectOne("SELECT * FROM users WHERE username = '" + user.username() + "'")) {
             ArrayList<Object> values = new ArrayList<>(List.of(user.username(), user.email(), user.password()));
             ArrayList<String> stringValues = new ArrayList<>();
 
@@ -25,7 +25,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) {
-        HashMap<String, String> userMap = DatabaseManager.selectOne("SELECT * FROM user WHERE username = " + username);
+        HashMap<String, String> userMap = DatabaseManager.selectOne("SELECT * FROM users WHERE username = '" + username +"'");
         if (userMap != null) {
             return new UserData(userMap.get("username"), userMap.get("email"), userMap.get("password"));
         }
