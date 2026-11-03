@@ -15,14 +15,16 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public boolean createGame(GameData game) {
-        if (null != DatabaseManager.selectOne("SELECT * FROM game WHERE id = " + game.gameID())) {
+        if (null == DatabaseManager.selectOne("SELECT * FROM game WHERE gameID = " + game.gameID())) {
             String gameJson = new Gson().toJson(game);
-            ArrayList<Object> values = new ArrayList<>(List.of(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), gameJson));
-            ArrayList<String> stringValues = new ArrayList<>();
+            ArrayList<String> values = new ArrayList<>();
+            values.add(String.valueOf(game.gameID()));
+            values.add(game.whiteUsername());
+            values.add(game.blackUsername());
+            values.add(game.gameName());
+            values.add(gameJson);
 
-            for (Object value : values) {stringValues.add(value.toString());}
-
-            DatabaseManager.executeWithValues("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)", stringValues);
+            DatabaseManager.executeWithValues("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)", values);
         }
         return false;
     }
@@ -32,7 +34,7 @@ public class SQLGameDAO implements GameDAO {
         if (null == DatabaseManager.selectOne("SELECT * FROM game WHERE gameID = " + game.gameID())) {
             return false;
         }
-        DatabaseManager.execute("DELETE FROM game WHERE id = " + game.gameID());
+        DatabaseManager.execute("DELETE FROM game WHERE gameID = " + game.gameID());
         return createGame(game);
     }
 

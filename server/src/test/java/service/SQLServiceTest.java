@@ -2,7 +2,7 @@ package service;
 
 import chess.ChessGame;
 import model.UserData;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class SQLServiceTest {
 
-    @BeforeAll
-    static void reset() {
+    @BeforeEach
+    void reset() {
         Service myService = new Service("SQL");
         myService.clear();
     }
