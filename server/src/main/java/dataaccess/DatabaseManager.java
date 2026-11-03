@@ -137,8 +137,10 @@ public class DatabaseManager {
         try (var conn = DatabaseManager.getConnection();) {
             var statement = conn.prepareStatement(sqlBlock);
             ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                rsList.add(mapify(rs));
+            while (true) {
+                HashMap<String, String> row = mapify(rs);
+                if (row == null) {break;}
+                rsList.add(row);
             }
             return rsList;
         } catch (SQLException | DataAccessException ex) {
