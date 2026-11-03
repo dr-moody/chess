@@ -68,7 +68,7 @@ public class Server {
         ServiceResponse response = service.listGames(authToken);
 
         if (Objects.equals(response.get("status code"), "500")) {
-            ServiceResponse serverResponse = new ServiceResponse("message:bad connection");
+            ServiceResponse serverResponse = new ServiceResponse("message:Error: internal server error");
             ctx.status(500).result(new Gson().toJson(response.body));
         } else if (Objects.equals(response.get("status code"), "200")) {
             ArrayList<GameData> gamesList = new Gson().fromJson(response.get("games"), ArrayList.class);
@@ -100,7 +100,8 @@ public class Server {
     }
 
     private void clear(Context ctx) {
-        ctx.status(Integer.parseInt(service.clear().get("status code"))).result(new Gson().toJson(new ServiceResponse("message:Error bad request").body));
+        ServiceResponse response = service.clear();
+        ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(response.body));
     }
 
     public int run(int desiredPort) {

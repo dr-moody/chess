@@ -12,6 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemoryServiceTest {
 
     @Test
+    void alternateService() {
+        Service myService = new Service("SQL");
+    }
+
+    @Test
     void clear() throws DataAccessException {
         Service myService = new Service("Memory");
         myService.register(new UserData("adam","1234","abc@gmail.com"));
@@ -93,6 +98,8 @@ class MemoryServiceTest {
         myService.createGame(authToken, "test game 3");
 
         assert(myService.serviceGameDAO.getAllGames().size() == 3);
+        assert(Objects.equals(myService.listGames(authToken).get("status code"), "200"));
+        assert(Objects.equals(myService.listGames(null).get("status code"), "401"));
     }
 
     @Test
