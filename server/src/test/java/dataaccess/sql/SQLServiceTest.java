@@ -2,6 +2,7 @@ package dataaccess.sql;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -106,6 +107,7 @@ class SQLServiceTest {
         Service myService = new Service("SQL");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
+
         myService.createGame(authToken, "test game 1");
         myService.createGame(authToken, "test game 2");
         myService.createGame(authToken, "test game 3");
@@ -134,5 +136,21 @@ class SQLServiceTest {
 
         assertEquals("Error: already taken", takenJoinResponse.get("message"));
 
+    }
+
+    @Test
+    void updateGame() throws DataAccessException {
+        Service myService = new Service("SQL");
+        assertFalse(myService.serviceGameDAO
+                .updateGame(
+                    new GameData(
+                            -1,
+                            null,
+                            null,
+                            "bogus",
+                            new ChessGame()
+                    )
+                )
+        );
     }
 }

@@ -58,9 +58,6 @@ public class SQLGameDAO implements GameDAO {
         ArrayList<HashMap<String, String>> mapList = DatabaseManager.selectAll("SELECT * FROM game");
 
         for (HashMap<String, String> gameMap : mapList) {
-            if (gameMap == null) {
-                continue;
-            }
             ChessGame game = new Gson().fromJson(gameMap.get("game"), ChessGame.class);
             gamesList.add(
                     new GameData(
