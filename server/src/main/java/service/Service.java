@@ -65,7 +65,7 @@ public class Service {
             UserData user = serviceUserDAO.getUser(loginRequest.username());
             if (loginRequest.username() == null || loginRequest.password() == null) {
                 return new ServiceResponse("status code:400,message:Error: bad request");
-            } else if (user == null || !Objects.equals(user.password(), BCrypt.hashpw(loginRequest.password(), BCrypt.gensalt()))) {
+            } else if (user == null || !BCrypt.checkpw(loginRequest.password(), user.password())) {
                 return new ServiceResponse("status code:401,message:Error: unauthorized");
             }
             String authToken = generateToken();
