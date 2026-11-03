@@ -6,6 +6,7 @@ import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -64,7 +65,7 @@ public class Service {
             UserData user = serviceUserDAO.getUser(loginRequest.username());
             if (loginRequest.username() == null || loginRequest.password() == null) {
                 return new ServiceResponse("status code:400,message:Error: bad request");
-            } else if (user == null || !Objects.equals(user.password(), loginRequest.password())) {
+            } else if (user == null || !Objects.equals(user.password(), BCrypt.hashpw(loginRequest.password(), BCrypt.gensalt()))) {
                 return new ServiceResponse("status code:401,message:Error: unauthorized");
             }
             String authToken = generateToken();

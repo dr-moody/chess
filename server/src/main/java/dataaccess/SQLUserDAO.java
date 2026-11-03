@@ -2,6 +2,7 @@ package dataaccess;
 
 import com.google.gson.Gson;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,8 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public void createUser(UserData user) throws DataAccessException {
         if (null == DatabaseManager.selectOne("SELECT * FROM users WHERE username = '" + user.username() + "'")) {
-            ArrayList<Object> values = new ArrayList<>(List.of(user.username(), user.email(), user.password()));
+            String hashword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+            ArrayList<Object> values = new ArrayList<>(List.of(user.username(), user.email(), hashword));
             ArrayList<String> stringValues = new ArrayList<>();
 
             for (Object value : values) {stringValues.add(value.toString());}
