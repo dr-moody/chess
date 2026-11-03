@@ -1,10 +1,12 @@
-package service;
+package dataaccess.sql;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.Service;
+import service.ServiceResponse;
 
 import java.util.Objects;
 

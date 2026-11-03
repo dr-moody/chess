@@ -12,9 +12,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Service {
-    AuthDAO serviceAuthDAO;
-    GameDAO serviceGameDAO;
-    UserDAO serviceUserDAO;
+    public AuthDAO serviceAuthDAO;
+    public GameDAO serviceGameDAO;
+    public UserDAO serviceUserDAO;
 
     public Service (String daoType) {
         if (Objects.equals(daoType, "Memory")) {
