@@ -1,14 +1,14 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SQLServiceTest {
 
@@ -19,7 +19,7 @@ class SQLServiceTest {
     }
 
     @Test
-    void clear() {
+    void clear() throws DataAccessException {
         Service myService = new Service("SQL");
         myService.register(new UserData("adam","1234","abc@gmail.com"));
         myService.clear();
@@ -28,7 +28,7 @@ class SQLServiceTest {
     }
 
     @Test
-    void register() {
+    void register() throws DataAccessException {
         Service myService = new Service("SQL");
         myService.register(new UserData("adam","1234","abc@gmail.com"));
 
@@ -40,7 +40,7 @@ class SQLServiceTest {
     }
 
     @Test
-    void login() {
+    void login() throws DataAccessException {
         Service myService = new Service("SQL");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -62,7 +62,7 @@ class SQLServiceTest {
     }
 
     @Test
-    void logout() {
+    void logout() throws DataAccessException {
         Service myService = new Service("SQL");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -76,7 +76,7 @@ class SQLServiceTest {
     }
 
     @Test
-    void createGame() {
+    void createGame() throws DataAccessException {
         Service myService = new Service("SQL");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -88,10 +88,14 @@ class SQLServiceTest {
         ServiceResponse phonyCreateResponse = myService.createGame(Service.generateToken(), "dead");
 
         assert(Objects.equals(phonyCreateResponse.get("message"), "Error: unauthorized"));
+
+        ServiceResponse nullCreateResponse = myService.createGame(Service.generateToken(), null);
+
+        assertEquals(nullCreateResponse.get("message"), "Error: unauthorized");
     }
 
     @Test
-    void listGames() {
+    void listGames() throws DataAccessException {
         Service myService = new Service("SQL");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -103,7 +107,7 @@ class SQLServiceTest {
     }
 
     @Test
-    void joinGame() {
+    void joinGame() throws DataAccessException {
         Service myService = new Service("SQL");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -116,5 +120,10 @@ class SQLServiceTest {
         ServiceResponse phonyJoinResponse = myService.joinGame(Service.generateToken(), ChessGame.TeamColor.WHITE, 0);
 
         assert(Objects.equals(phonyJoinResponse.get("message"), "Error: unauthorized"));
+
+        ServiceResponse takenJoinResponse = myService.joinGame(authToken, ChessGame.TeamColor.WHITE, gameID);
+
+        assertEquals("Error: already taken", takenJoinResponse.get("message"));
+
     }
 }

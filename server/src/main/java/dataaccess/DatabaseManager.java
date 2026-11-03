@@ -101,38 +101,38 @@ public class DatabaseManager {
         connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
     }
 
-    public static void execute(String sqlBlock) {
+    public static void execute(String sqlBlock) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection();) {
             var statement = conn.createStatement();
             statement.execute(sqlBlock);
-        } catch (SQLException | DataAccessException ex) {
-            System.out.println(ex);
+        } catch (SQLException ex) {
+           throw new DataAccessException(ex.getMessage());
         }
     }
 
-    public static void executeWithValues(String sqlBlock, ArrayList<String> values) {
+    public static void executeWithValues(String sqlBlock, ArrayList<String> values) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sqlBlock)) {
             for (int i = 0; i < values.size(); i++) {
                 ps.setString(i + 1, values.get(i));
             }
             ps.executeUpdate();
-        } catch (SQLException | DataAccessException ex) {
-            System.out.println(ex);
+        } catch (SQLException ex) {
+            throw new DataAccessException(ex.getMessage());
         }
     }
 
-    public static HashMap<String, String> selectOne(String sqlBlock) {
+    public static HashMap<String, String> selectOne(String sqlBlock) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection();) {
             var statement = conn.prepareStatement(sqlBlock);
             ResultSet rs = statement.executeQuery();
             return mapify(rs);
-        } catch (SQLException | DataAccessException ex) {
-            System.out.println(ex);
-            return null;
+        } catch (SQLException ex) {
+            throw new DataAccessException(ex.getMessage());
+//            return null;
         }
     }
 
-    public static ArrayList<HashMap<String, String>> selectAll(String sqlBlock) {
+    public static ArrayList<HashMap<String, String>> selectAll(String sqlBlock) throws DataAccessException {
         ArrayList<HashMap<String, String>> rsList = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection();) {
             var statement = conn.prepareStatement(sqlBlock);
@@ -143,9 +143,9 @@ public class DatabaseManager {
                 rsList.add(row);
             }
             return rsList;
-        } catch (SQLException | DataAccessException ex) {
-            System.out.println(ex);
-            return rsList;
+        } catch (SQLException ex) {
+            throw new DataAccessException(ex.getMessage());
+//            return rsList;
         }
     }
 

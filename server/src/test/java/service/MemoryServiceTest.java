@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemoryServiceTest {
 
     @Test
-    void clear() {
+    void clear() throws DataAccessException {
         Service myService = new Service("Memory");
         myService.register(new UserData("adam","1234","abc@gmail.com"));
         myService.clear();
@@ -20,7 +21,7 @@ class MemoryServiceTest {
     }
 
     @Test
-    void register() {
+    void register() throws DataAccessException {
         Service myService = new Service("Memory");
         myService.register(new UserData("adam","1234","abc@gmail.com"));
 
@@ -32,7 +33,7 @@ class MemoryServiceTest {
     }
 
     @Test
-    void login() {
+    void login() throws DataAccessException {
         Service myService = new Service("Memory");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -54,7 +55,7 @@ class MemoryServiceTest {
     }
 
     @Test
-    void logout() {
+    void logout() throws DataAccessException {
         Service myService = new Service("Memory");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -68,7 +69,7 @@ class MemoryServiceTest {
     }
 
     @Test
-    void createGame() {
+    void createGame() throws DataAccessException {
         Service myService = new Service("Memory");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -83,7 +84,7 @@ class MemoryServiceTest {
     }
 
     @Test
-    void listGames() {
+    void listGames() throws DataAccessException {
         Service myService = new Service("Memory");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");
@@ -95,7 +96,7 @@ class MemoryServiceTest {
     }
 
     @Test
-    void joinGame() {
+    void joinGame() throws DataAccessException {
         Service myService = new Service("Memory");
         ServiceResponse response = myService.register(new UserData("adam","1234","abc@gmail.com"));
         String authToken = response.get("authToken");

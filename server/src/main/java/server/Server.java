@@ -22,7 +22,7 @@ public class Server {
 
     public Server() {
 
-        this.service = new Service("Memory");
+        this.service = new Service("SQL");
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
 
