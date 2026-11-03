@@ -67,7 +67,10 @@ public class Server {
         String authToken = ctx.header("authorization");
         ServiceResponse response = service.listGames(authToken);
 
-        if (Objects.equals(response.get("status code"), "200")) {
+        if (Objects.equals(response.get("status code"), "500")) {
+            ServiceResponse serverResponse = new ServiceResponse("message:bad connection");
+            ctx.status(500).result(new Gson().toJson(response.body));
+        } else if (Objects.equals(response.get("status code"), "200")) {
             ArrayList<GameData> gamesList = new Gson().fromJson(response.get("games"), ArrayList.class);
             Map<String, ArrayList<GameData>> gamesMap = Map.of("games", gamesList);
 
@@ -97,7 +100,7 @@ public class Server {
     }
 
     private void clear(Context ctx) {
-        ctx.status(Integer.parseInt(service.clear().get("status code")));
+        ctx.status(Integer.parseInt(service.clear().get("status code"))).result(new Gson().toJson(new ServiceResponse("message:Error bad request").body));
     }
 
     public int run(int desiredPort) {
