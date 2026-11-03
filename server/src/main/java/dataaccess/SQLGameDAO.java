@@ -29,7 +29,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public boolean updateGame(GameData game) {
-        if (null == DatabaseManager.selectOne("SELECT * FROM game WHERE id = " + game.gameID())) {
+        if (null == DatabaseManager.selectOne("SELECT * FROM game WHERE gameID = " + game.gameID())) {
             return false;
         }
         DatabaseManager.execute("DELETE FROM game WHERE id = " + game.gameID());
@@ -38,7 +38,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(int gameID) {
-        HashMap<String, String> gameMap = DatabaseManager.selectOne("SELECT * FROM game WHERE id = " + gameID);
+        HashMap<String, String> gameMap = DatabaseManager.selectOne("SELECT * FROM game WHERE gameID = " + gameID);
         if (gameMap != null) {
             ChessGame game = new Gson().fromJson(gameMap.get("game"), ChessGame.class);
             return new GameData(gameID, gameMap.get("whiteUsername"), gameMap.get("blackUsername"), gameMap.get("gameName"), game);

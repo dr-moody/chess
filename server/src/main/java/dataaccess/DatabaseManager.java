@@ -113,7 +113,7 @@ public class DatabaseManager {
     public static void executeWithValues(String sqlBlock, ArrayList<String> values) {
         try (var conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sqlBlock)) {
             for (int i = 0; i < values.size(); i++) {
-                ps.setString(i, values.get(i));
+                ps.setString(i + 1, values.get(i));
             }
             ps.executeUpdate();
         } catch (SQLException | DataAccessException ex) {
@@ -125,7 +125,6 @@ public class DatabaseManager {
         try (var conn = DatabaseManager.getConnection();) {
             var statement = conn.prepareStatement(sqlBlock);
             ResultSet rs = statement.executeQuery();
-            rs.next();
             return mapify(rs);
         } catch (SQLException | DataAccessException ex) {
             System.out.println(ex);
@@ -151,6 +150,8 @@ public class DatabaseManager {
     private static HashMap<String, String> mapify(ResultSet rs) throws SQLException {
         ResultSetMetaData fields = rs.getMetaData();
         HashMap<String, String> object = new HashMap<>();
+
+        if (!rs.next()) {return null;}
 
         for (int i = 1; i <= fields.getColumnCount(); i++) {
             object.put(fields.getColumnLabel(i), rs.getString(i));
