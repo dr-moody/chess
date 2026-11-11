@@ -1,15 +1,20 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 
+import java.lang.reflect.Type;
 import java.net.http.HttpClient;
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
 
 public class ServerFacade {
       private final HttpClient client = HttpClient.newHttpClient();
@@ -46,15 +51,25 @@ public class ServerFacade {
     }
 
 //    list games
-    public void listGames (String auth) throws ResponseException {
+    public ArrayList<GameData> listGames (String auth) throws ResponseException {
         var request = buildRequest("GET", "/game", null, new Header("authorization", auth));
         var response = sendRequest(request);
-        return handleResponse(response, String.class);
+        return handleListResponse(response);
     }
 
 //    create game
+    public int createGame(String gameName, String auth) throws ResponseException {
+        var request = buildRequest("POST", "/game", new GameName(gameName), new Header("authorization", auth));
+        var response = sendRequest(request);
+        return handleResponse(response, int.class);
+
+    }
 
 //    join game
+    public void joinGame(int gameID, ChessGame.TeamColor color, String auth) throws ResponseException {
+        var request = buildRequest("PUT", "/game", new GameInfo(gameID, color), new Header("authorization", auth));
+        sendRequest(request);
+    }
 
 
     private HttpRequest buildRequest(String method, String path, Object body, Header head) {
@@ -100,6 +115,24 @@ public class ServerFacade {
         }
 
         return null;
+    }
+
+    private ArrayList<GameData> handleListResponse(HttpResponse<String> response) throws ResponseException {
+        var status = response.statusCode();
+        if (!isSuccessful(status)) {
+            var body = response.body();
+            if (body != null) {
+                throw ResponseException.fromJson(body);
+            }
+
+            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+        }
+
+        Type listClass = TypeToken
+                .getParameterized(ArrayList.class, GameData.class)
+                .getType();
+        return new Gson().fromJson(response.body(), listClass);
+
     }
 
     private boolean isSuccessful(int status) {
