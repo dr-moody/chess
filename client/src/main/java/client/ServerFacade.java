@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -17,6 +18,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ServerFacade {
       private final HttpClient client = HttpClient.newHttpClient();
@@ -63,7 +65,7 @@ public class ServerFacade {
     public int createGame(String gameName, String auth) throws ResponseException {
         var request = buildRequest("POST", "/game", new GameName(gameName), new Header("authorization", auth));
         var response = sendRequest(request);
-        return handleResponse(response, int.class);
+        return Integer.parseInt(Objects.requireNonNull(handleResponse(response, "gameID")));
 
     }
 
@@ -103,7 +105,7 @@ public class ServerFacade {
         }
     }
 
-    private <T> T handleResponse(HttpResponse<String> response, String field) throws ResponseException {
+    private String handleResponse(HttpResponse<String> response, String field) throws ResponseException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
@@ -114,12 +116,9 @@ public class ServerFacade {
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
 
-        if (responseClass != null) {
-            JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
-            return json.get(field);
-        }
+        JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
+        return json.get(field).getAsString();
 
-        return null;
     }
 
     private ArrayList<GameData> handleListResponse(HttpResponse<String> response) throws ResponseException {
@@ -133,11 +132,12 @@ public class ServerFacade {
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
 
-        Type listClass = TypeToken
-                .getParameterized(ArrayList.class, GameData.class)
-                .getType();
-        return new Gson().fromJson(response.body(), listClass);
+        JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
+        JsonArray jsonGames = json.get("games").getAsJsonArray();
 
+        Type listType = new TypeToken<ArrayList<GameData>>() {}.getType();
+
+        return new Gson().fromJson(jsonGames, listType);
     }
 
     private boolean isSuccessful(int status) {

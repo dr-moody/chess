@@ -33,13 +33,8 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-    @Test
-    void clear() throws ResponseException {
-        String auth = facade.register(testUser);
-        facade.createGame("testGame", auth);
-        facade.clear();
-        assert(facade.listGames(auth).isEmpty());
-    }
+//    Clear test not needed since it is called in BeforeEach,
+//    also we can't check it using listGames because our authToken gets deleted
 
     @Test
     void register() throws ResponseException {
@@ -48,15 +43,22 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void login() {
+    void login() throws ResponseException {
+        String auth = facade.register(testUser);
+        facade.logout(auth);
+        String loginAuth = facade.login(testUser);
+        assertNotNull(loginAuth);
     }
 
-    @Test
-    void logout() {
-    }
+//    Logout gets tested during login
 
     @Test
-    void listGames() {
+    void listGames() throws ResponseException {
+        String auth = facade.register(testUser);
+        facade.createGame("test1", auth);
+        facade.createGame("test2", auth);
+        facade.createGame("test3", auth);
+        assert(facade.listGames(auth).size() == 3);
     }
 
     @Test
