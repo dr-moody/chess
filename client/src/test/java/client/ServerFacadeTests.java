@@ -1,10 +1,13 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static sun.net.www.protocol.http.AuthCacheValue.Type.Server;
 
@@ -33,9 +36,6 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-//    Clear test not needed since it is called in BeforeEach,
-//    also we can't check it using listGames because our authToken gets deleted
-
     @Test
     void register() throws ResponseException {
         String auth = facade.register(testUser);
@@ -50,8 +50,6 @@ public class ServerFacadeTests {
         assertNotNull(loginAuth);
     }
 
-//    Logout gets tested during login
-
     @Test
     void listGames() throws ResponseException {
         String auth = facade.register(testUser);
@@ -62,17 +60,12 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void createGame() {
-    }
-
-    @Test
-    void joinGame() {
-    }
-
-
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    void joinGame() throws ResponseException {
+        String auth = facade.register(testUser);
+        int gameID = facade.createGame("test1", auth);
+        facade.joinGame(gameID, ChessGame.TeamColor.WHITE, auth);
+        GameData game = facade.listGames(auth).getFirst();
+        assertEquals(game.whiteUsername(), testUser.username());
     }
 
 }
