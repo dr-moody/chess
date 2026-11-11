@@ -2,6 +2,8 @@ package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import exception.ResponseException;
 import model.GameData;
@@ -34,14 +36,14 @@ public class ServerFacade {
     public String register (UserData user) throws ResponseException {
           var request = buildRequest("POST", "/user", user, null);
           var response = sendRequest(request);
-          return handleResponse(response, String.class);
+          return handleResponse(response, "authToken");
     }
 
 //    login
     public String login (UserData user) throws ResponseException {
         var request = buildRequest("POST", "/session", user, null);
         var response = sendRequest(request);
-        return handleResponse(response, String.class);
+        return handleResponse(response, "authToken");
     }
 
 //    logout
@@ -75,8 +77,10 @@ public class ServerFacade {
     private HttpRequest buildRequest(String method, String path, Object body, Header head) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
-                .method(method, makeRequestBody(body))
-                .header(head.name(), head.value());
+                .method(method, makeRequestBody(body));
+        if (head != null) {
+            request.header(head.name(), head.value());
+        }
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
@@ -99,7 +103,7 @@ public class ServerFacade {
         }
     }
 
-    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
+    private <T> T handleResponse(HttpResponse<String> response, String field) throws ResponseException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
@@ -111,7 +115,8 @@ public class ServerFacade {
         }
 
         if (responseClass != null) {
-            return new Gson().fromJson(response.body(), responseClass);
+            JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
+            return json.get(field);
         }
 
         return null;

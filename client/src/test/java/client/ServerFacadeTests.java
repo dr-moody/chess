@@ -5,6 +5,7 @@ import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static sun.net.www.protocol.http.AuthCacheValue.Type.Server;
 
 
@@ -22,6 +23,11 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
     }
 
+    @BeforeEach
+    public void reset() throws ResponseException {
+        facade.clear();
+    }
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -31,12 +37,14 @@ public class ServerFacadeTests {
     void clear() throws ResponseException {
         String auth = facade.register(testUser);
         facade.createGame("testGame", auth);
-
+        facade.clear();
+        assert(facade.listGames(auth).isEmpty());
     }
 
     @Test
-    void register() {
-
+    void register() throws ResponseException {
+        String auth = facade.register(testUser);
+        assertNotNull(auth);
     }
 
     @Test
