@@ -69,7 +69,7 @@ public class Server {
 
         if (Objects.equals(response.get("status code"), "500")) {
             ServiceResponse serverResponse = new ServiceResponse("message:Error: internal server error");
-            ctx.status(500).result(new Gson().toJson(response.body));
+            ctx.status(500).result(new Gson().toJson(serverResponse.body));
         } else if (Objects.equals(response.get("status code"), "200")) {
             ArrayList<GameData> gamesList = new Gson().fromJson(response.get("games"), ArrayList.class);
             Map<String, ArrayList<GameData>> gamesMap = Map.of("games", gamesList);
@@ -77,7 +77,7 @@ public class Server {
             ctx.status(Integer.parseInt(response.get("status code"))).result(new Gson().toJson(gamesMap));
         } else {
             ServiceResponse serverResponse = new ServiceResponse("message:Error: unauthorized");
-            ctx.status(401).result(new Gson().toJson(response.body));
+            ctx.status(401).result(new Gson().toJson(serverResponse.body));
         }
     }
 
