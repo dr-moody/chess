@@ -19,6 +19,10 @@ public class ChessBoard {
     public ChessBoard() {
     }
 
+    public ChessPiece[][] board() {
+        return board;
+    }
+
     @Override
     public String toString() {
         StringBuilder boardString = new StringBuilder();

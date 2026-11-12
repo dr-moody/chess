@@ -1,6 +1,8 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
@@ -121,16 +123,22 @@ public class ChessClient {
     }
 
     private String listGame() throws ResponseException {
+        StringBuilder gameString = new StringBuilder();
         ArrayList<GameData> gamesList = facade.listGames(auth);
         for (int i = 1; i <= gamesList.size(); i++) {
             GameData game = gamesList.get(i - 1);
-            System.out.println(
-                        "id: " + i
-                    + ", game name: " + game.gameName()
-                    +  ", white: " + game.whiteUsername()
-                    +  ", black: " + game.blackUsername()
-            );
+            gameString
+                    .append("id: ")
+                    .append(i)
+                    .append(", game name: ")
+                    .append(game.gameName())
+                    .append(", white: ")
+                    .append(game.whiteUsername())
+                    .append(", black: ")
+                    .append(game.blackUsername())
+                    .append("\n");
         }
+        return gameString.toString();
     }
 
     private String playGame() throws ResponseException {
@@ -151,10 +159,18 @@ public class ChessClient {
         ChessGame.TeamColor color = colorText.equals("w") ? WHITE : BLACK;
         facade.joinGame(gameID, color, auth);
 
-        drawBoard(gameID, color);
+        return drawBoard(gameID, color);
     }
 
-    private String observeGame() {
+    private String observeGame() throws ResponseException {
+        System.out.println("Please enter a game number");
+        int gameNum = Integer.parseInt(scanner.nextLine());
+        ArrayList<GameData> gamesList = facade.listGames(auth);
+        int gameID = gamesList.get(gameNum).gameID();
+
+        facade.joinGame(gameID, null, auth);
+
+        return drawBoard(gameID, WHITE);
     }
 
     private String help() {
@@ -176,6 +192,24 @@ public class ChessClient {
                 """;
     }
 
-    private void drawBoard(int gameID, ChessGame.TeamColor color) {
+    private String drawBoard(int gameID, ChessGame.TeamColor color) throws ResponseException {
+        ChessBoard board = facade.listGames(auth).get(gameID).game().getBoard();
+
+        StringBuilder boardString = new StringBuilder();
+
+        // Need to iter through the rows backwards so it doesn't print upsidedown
+        for (int i = board.length() - 1; i >= 0; i--) {
+            for (ChessPiece square : Arrays.copyOfRange(board[i], 0, 8)) {
+                if (square != null) {
+                    boardString.append(square.toString()).append(" ");
+                }
+                else {
+                    boardString.append(". ");
+                }
+            }
+            boardString.append("\n");
+        }
+
+        return boardString.toString();
     }
 }
