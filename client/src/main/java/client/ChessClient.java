@@ -78,7 +78,7 @@ public class ChessClient {
                 };
             }
         } catch (ResponseException ex) {
-            return "error: " + Arrays.toString(ex.getStackTrace());
+            return "error";
         }
     }
 
@@ -145,10 +145,20 @@ public class ChessClient {
     }
 
     private String playGame() throws ResponseException {
-        System.out.println("Please enter a game number");
-        int gameNum = Integer.parseInt(scanner.nextLine());
-        ArrayList<GameData> gamesList = facade.listGames(auth);
-        int gameID = gamesList.get(gameNum - 1).gameID();
+        int gameID;
+        int gameNum;
+        while (true) {
+            try {
+                System.out.println("Please enter a game number");
+                gameNum = Integer.parseInt(scanner.nextLine());
+                ArrayList<GameData> gamesList = facade.listGames(auth);
+                gameID = gamesList.get(gameNum - 1).gameID();
+                break;
+            } catch (Throwable _) {
+                System.out.println("Invalid game number, please choose one from below");
+                System.out.println(listGame());
+            }
+        }
 
         String colorText = "";
         boolean triedYet = false;
@@ -162,18 +172,28 @@ public class ChessClient {
         ChessGame.TeamColor color = colorText.equals("w") ? WHITE : BLACK;
         facade.joinGame(gameID, color, auth);
 
-        return drawBoard(gameID, color);
+        return drawBoard(gameNum - 1, color);
     }
 
     private String observeGame() throws ResponseException {
-        System.out.println("Please enter a game number");
-        int gameNum = Integer.parseInt(scanner.nextLine());
-        ArrayList<GameData> gamesList = facade.listGames(auth);
-        int gameID = gamesList.get(gameNum).gameID();
+        int gameID;
+        int gameNum;
+        while (true) {
+            try {
+                System.out.println("Please enter a game number");
+                gameNum = Integer.parseInt(scanner.nextLine());
+                ArrayList<GameData> gamesList = facade.listGames(auth);
+                gameID = gamesList.get(gameNum - 1).gameID();
+                break;
+            } catch (Throwable _) {
+                System.out.println("Invalid game number, please choose one from below");
+                System.out.println(listGame());
+            }
+        }
 
         facade.joinGame(gameID, null, auth);
 
-        return drawBoard(gameID, WHITE);
+        return drawBoard(gameNum - 1, WHITE);
     }
 
     private String help() {
@@ -196,8 +216,8 @@ public class ChessClient {
                 """;
     }
 
-    private String drawBoard(int gameID, ChessGame.TeamColor color) throws ResponseException {
-        ChessBoard gameBoard = facade.listGames(auth).get(gameID).game().getBoard();
+    private String drawBoard(int gameNum, ChessGame.TeamColor color) throws ResponseException {
+        ChessBoard gameBoard = facade.listGames(auth).get(gameNum).game().getBoard();
         ChessPiece[][] board = gameBoard.board();
 
 
@@ -206,43 +226,47 @@ public class ChessClient {
         if (color == WHITE) {
             // Need to iter through the rows backwards so it doesn't print upsidedown
             for (int i = board.length - 1; i >= 0; i--) {
-                boardString.append(SET_BG_COLOR_YELLOW + i + " " + RESET);
+                boardString.append(SET_BG_COLOR_BLACK + " " + (i + 1) + " " + RESET);
                 for (int j = 0 ; j < Arrays.copyOfRange(board[i], 0, 8).length; j++) {
                     ChessPiece square =  Arrays.copyOfRange(board[i], 0, 8)[j];
-                    String squareColor = (i + j % 2 == 0) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREEN;
+                    String squareColor = ((i + j) % 2 == 0) ? SET_BG_COLOR_DARK_GREEN : SET_BG_COLOR_LIGHT_GREY;
                     boardString.append(squareColor);
                     if (square != null) {
-                        boardString.append(square.toString()).append(" ");
+                        String pieceColor = (square.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+                        boardString.append(pieceColor);
+                        boardString.append(" ").append(square.toString()).append(" ");
                     } else {
-                        boardString.append(". ");
+                        boardString.append("   ");
                     }
                     boardString.append(RESET);
                 }
                 boardString.append("\n");
             }
-            boardString.append(" ");
+            boardString.append("   ");
             for (int k = 1; k <= 8; k++) {
-                boardString.append(SET_BG_COLOR_YELLOW + k + " " + RESET);
+                boardString.append(SET_BG_COLOR_BLACK + " " + k + " " + RESET);
             }
         } else {
-            for (int i = board.length; i < 8; i++) {
-                boardString.append(SET_BG_COLOR_YELLOW + i + " " + RESET);
-                for (int j = 0 ; j < Arrays.copyOfRange(board[i], 0, 8).length; j++) {
+            for (int i = 0; i < board.length; i++) {
+                boardString.append(SET_BG_COLOR_BLACK + " " + (i + 1) + " " + RESET);
+                for (int j = Arrays.copyOfRange(board[i], 0, 8).length - 1; j >= 0 ; j--) {
                     ChessPiece square =  Arrays.copyOfRange(board[i], 0, 8)[j];
-                    String squareColor = (i + j % 2 == 0) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREEN;
+                    String squareColor = ((i + j) % 2 == 0) ? SET_BG_COLOR_DARK_GREEN : SET_BG_COLOR_LIGHT_GREY;
                     boardString.append(squareColor);
                     if (square != null) {
-                        boardString.append(square.toString()).append(" ");
+                        String pieceColor = (square.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+                        boardString.append(pieceColor);
+                        boardString.append(" ").append(square.toString()).append(" ");
                     } else {
-                        boardString.append(". ");
+                        boardString.append("   ");
                     }
                     boardString.append(RESET);
                 }
                 boardString.append("\n");
             }
-            boardString.append(" ");
-            for (int k = 1; k <= 8; k++) {
-                boardString.append(SET_BG_COLOR_YELLOW + k + " " + RESET);
+            boardString.append("   ");
+            for (int k = 8; k >= 1; k--) {
+                boardString.append(SET_BG_COLOR_BLACK + " " + k + " " + RESET);
             }
         }
 
