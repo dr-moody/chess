@@ -8,10 +8,7 @@ import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
@@ -146,20 +143,9 @@ public class ChessClient {
     }
 
     private String playGame() throws ResponseException {
-        int gameID;
-        int gameNum;
-        while (true) {
-            try {
-                System.out.println("Please enter a game number");
-                gameNum = Integer.parseInt(scanner.nextLine());
-                ArrayList<GameData> gamesList = facade.listGames(auth);
-                gameID = gamesList.get(gameNum - 1).gameID();
-                break;
-            } catch (Throwable _) {
-                System.out.println("Invalid game number, please choose one from below");
-                System.out.println(listGame());
-            }
-        }
+        ArrayList<Integer> gameNums = getGameNum();
+        int gameID = gameNums.get(0);
+        int gameNum = gameNums.get(1);
 
         String colorText = "";
         boolean triedYet = false;
@@ -177,20 +163,9 @@ public class ChessClient {
     }
 
     private String observeGame() throws ResponseException {
-        int gameID;
-        int gameNum;
-        while (true) {
-            try {
-                System.out.println("Please enter a game number");
-                gameNum = Integer.parseInt(scanner.nextLine());
-                ArrayList<GameData> gamesList = facade.listGames(auth);
-                gameID = gamesList.get(gameNum - 1).gameID();
-                break;
-            } catch (Throwable _) {
-                System.out.println("Invalid game number, please choose one from below");
-                System.out.println(listGame());
-            }
-        }
+        ArrayList<Integer> gameNums = getGameNum();
+        int gameID = gameNums.get(0);
+        int gameNum = gameNums.get(1);
 
         facade.joinGame(gameID, null, auth);
 
@@ -217,6 +192,24 @@ public class ChessClient {
                 """;
     }
 
+    private ArrayList<Integer> getGameNum () throws ResponseException {
+        int gameID;
+        int gameNum;
+        while (true) {
+            try {
+                System.out.println("Please enter a game number");
+                gameNum = Integer.parseInt(scanner.nextLine());
+                ArrayList<GameData> gamesList = facade.listGames(auth);
+                gameID = gamesList.get(gameNum - 1).gameID();
+                break;
+            } catch (Throwable _) {
+                System.out.println("Invalid game number, please choose one from below");
+                System.out.println(listGame());
+            }
+        }
+        return new ArrayList<>(List.of(gameID, gameNum));
+    }
+
     private String drawBoard(int gameNum, ChessGame.TeamColor color) throws ResponseException {
         ChessBoard gameBoard = facade.listGames(auth).get(gameNum).game().getBoard();
         ChessPiece[][] board = gameBoard.board();
@@ -235,7 +228,7 @@ public class ChessClient {
             }
             boardString.append("   ");
             for (int k = 1; k <= 8; k++) {
-                boardString.append(SET_BG_COLOR_BLACK + " " + num_to_alph(k) + " " + RESET);
+                boardString.append(SET_BG_COLOR_BLACK + " " + numToAlph(k) + " " + RESET);
             }
         } else {
             for (int i = 0; i < board.length; i++) {
@@ -247,14 +240,14 @@ public class ChessClient {
             }
             boardString.append("   ");
             for (int k = 8; k >= 1; k--) {
-                boardString.append(SET_BG_COLOR_BLACK + " " + num_to_alph(k) + " " + RESET);
+                boardString.append(SET_BG_COLOR_BLACK + " " + numToAlph(k) + " " + RESET);
             }
         }
 
         return boardString.toString();
     }
 
-    private String num_to_alph(int k) {
+    private String numToAlph(int k) {
         return switch (k) {
             case 1 -> "a";
             case 2 -> "b";
