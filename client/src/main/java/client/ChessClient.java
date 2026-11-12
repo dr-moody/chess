@@ -3,6 +3,7 @@ package client;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
+import com.google.gson.internal.Streams;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
@@ -228,48 +229,61 @@ public class ChessClient {
             for (int i = board.length - 1; i >= 0; i--) {
                 boardString.append(SET_BG_COLOR_BLACK + " " + (i + 1) + " " + RESET);
                 for (int j = 0 ; j < Arrays.copyOfRange(board[i], 0, 8).length; j++) {
-                    ChessPiece square =  Arrays.copyOfRange(board[i], 0, 8)[j];
-                    String squareColor = ((i + j) % 2 == 0) ? SET_BG_COLOR_DARK_GREEN : SET_BG_COLOR_LIGHT_GREY;
-                    boardString.append(squareColor);
-                    if (square != null) {
-                        String pieceColor = (square.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
-                        boardString.append(pieceColor);
-                        boardString.append(" ").append(square.toString()).append(" ");
-                    } else {
-                        boardString.append("   ");
-                    }
-                    boardString.append(RESET);
+                    boardString.append(drawSquare(board, i, j));
                 }
                 boardString.append("\n");
             }
             boardString.append("   ");
             for (int k = 1; k <= 8; k++) {
-                boardString.append(SET_BG_COLOR_BLACK + " " + k + " " + RESET);
+                boardString.append(SET_BG_COLOR_BLACK + " " + num_to_alph(k) + " " + RESET);
             }
         } else {
             for (int i = 0; i < board.length; i++) {
                 boardString.append(SET_BG_COLOR_BLACK + " " + (i + 1) + " " + RESET);
                 for (int j = Arrays.copyOfRange(board[i], 0, 8).length - 1; j >= 0 ; j--) {
-                    ChessPiece square =  Arrays.copyOfRange(board[i], 0, 8)[j];
-                    String squareColor = ((i + j) % 2 == 0) ? SET_BG_COLOR_DARK_GREEN : SET_BG_COLOR_LIGHT_GREY;
-                    boardString.append(squareColor);
-                    if (square != null) {
-                        String pieceColor = (square.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
-                        boardString.append(pieceColor);
-                        boardString.append(" ").append(square.toString()).append(" ");
-                    } else {
-                        boardString.append("   ");
-                    }
-                    boardString.append(RESET);
+                    boardString.append(drawSquare(board, i, j));
                 }
                 boardString.append("\n");
             }
             boardString.append("   ");
             for (int k = 8; k >= 1; k--) {
-                boardString.append(SET_BG_COLOR_BLACK + " " + k + " " + RESET);
+                boardString.append(SET_BG_COLOR_BLACK + " " + num_to_alph(k) + " " + RESET);
             }
         }
 
         return boardString.toString();
     }
+
+    private String num_to_alph(int k) {
+        return switch (k) {
+            case 1 -> "a";
+            case 2 -> "b";
+            case 3 -> "c";
+            case 4 -> "d";
+            case 5 -> "e";
+            case 6 -> "f";
+            case 7 -> "g";
+            case 8 -> "h";
+            default -> "null";
+        };
+    }
+
+    private String drawSquare(ChessPiece[][] board, int i, int j) {
+        StringBuilder squareString = new StringBuilder();
+        ChessPiece square =  Arrays.copyOfRange(board[i], 0, 8)[j];
+        String squareColor = ((i + j) % 2 == 0) ? SET_BG_COLOR_DARK_GREEN : SET_BG_COLOR_LIGHT_GREY;
+        squareString.append(squareColor);
+        if (square != null) {
+            String pieceColor = (square.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+            squareString.append(pieceColor);
+            squareString.append(" ").append(square.toString()).append(" ");
+        } else {
+            squareString.append("   ");
+        }
+        squareString.append(RESET);
+
+        return squareString.toString();
+    }
+
+
 }
