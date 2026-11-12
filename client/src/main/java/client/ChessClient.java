@@ -2,8 +2,10 @@ package client;
 
 import chess.ChessGame;
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Scanner;
@@ -71,9 +73,8 @@ public class ChessClient {
                 };
             }
         } catch (ResponseException ex) {
-            System.out.println("error");
+            return "error";
         }
-
     }
 
     private String login() throws ResponseException {
@@ -115,15 +116,29 @@ public class ChessClient {
         facade.logout(auth);
         auth = "";
         state = SIGNEDOUT;
+
+        return "Logged out";
     }
 
-    private String listGame() {
-
+    private String listGame() throws ResponseException {
+        ArrayList<GameData> gamesList = facade.listGames(auth);
+        for (int i = 1; i <= gamesList.size(); i++) {
+            GameData game = gamesList.get(i - 1);
+            System.out.println(
+                        "id: " + i
+                    + ", game name: " + game.gameName()
+                    +  ", white: " + game.whiteUsername()
+                    +  ", black: " + game.blackUsername()
+            );
+        }
     }
 
     private String playGame() throws ResponseException {
-        System.out.println("Please enter a game ID");
-        int gameID = Integer.parseInt(scanner.nextLine());
+        System.out.println("Please enter a game number");
+        int gameNum = Integer.parseInt(scanner.nextLine());
+        ArrayList<GameData> gamesList = facade.listGames(auth);
+        int gameID = gamesList.get(gameNum).gameID();
+
         String colorText = "";
         boolean triedYet = false;
         while (colorText.toLowerCase(Locale.ROOT).charAt(0) != 'w' &&
