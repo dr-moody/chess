@@ -35,11 +35,13 @@ public class ChessClient {
         scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
-            printPropmt();
+            printPrompt();
             String line = scanner.nextLine();
 
             try {
-                System.out.println(eval(line));
+                result = eval(line);
+                if (!result.equals("quit")) {System.out.println(result);}
+
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -47,8 +49,8 @@ public class ChessClient {
         }
     }
 
-    private void printPropmt() {
-        System.out.print("\n" + RESET + ">>> " + GREEN);
+    private void printPrompt() {
+        System.out.print(RESET + "\n" + GREEN + ">>> " + RESET);
     }
 
     private String eval(String line) {
@@ -71,11 +73,12 @@ public class ChessClient {
                     case "list games" -> listGame();
                     case "play game" -> playGame();
                     case "observe game" -> observeGame();
+                    case "quit" -> "quit";
                     default -> help();
                 };
             }
         } catch (ResponseException ex) {
-            return "error";
+            return "error: " + Arrays.toString(ex.getStackTrace());
         }
     }
 
@@ -145,12 +148,12 @@ public class ChessClient {
         System.out.println("Please enter a game number");
         int gameNum = Integer.parseInt(scanner.nextLine());
         ArrayList<GameData> gamesList = facade.listGames(auth);
-        int gameID = gamesList.get(gameNum).gameID();
+        int gameID = gamesList.get(gameNum - 1).gameID();
 
         String colorText = "";
         boolean triedYet = false;
-        while (colorText.toLowerCase(Locale.ROOT).charAt(0) != 'w' &&
-                colorText.toLowerCase(Locale.ROOT).charAt(0) != 'b') {
+        while (colorText.isEmpty() || (colorText.toLowerCase(Locale.ROOT).charAt(0) != 'w' &&
+                colorText.toLowerCase(Locale.ROOT).charAt(0) != 'b')) {
             if (triedYet) {System.out.println("Invalid, please try again.");}
             System.out.println("Would you like to play white or black? (w/b)");
             colorText = scanner.nextLine();
@@ -189,6 +192,7 @@ public class ChessClient {
                 - list games
                 - play game
                 - observe game
+                - quit
                 """;
     }
 
