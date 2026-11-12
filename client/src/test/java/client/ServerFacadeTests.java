@@ -9,7 +9,6 @@ import server.Server;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static sun.net.www.protocol.http.AuthCacheValue.Type.Server;
 
 
 public class ServerFacadeTests {
