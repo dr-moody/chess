@@ -36,14 +36,9 @@ public class ChessClient {
             printPrompt();
             String line = scanner.nextLine();
 
-            try {
-                result = eval(line);
-                if (!result.equals("quit")) {System.out.println(result);}
+            result = eval(line);
+            if (!result.equals("quit")) {System.out.println(result);}
 
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
-            }
         }
     }
 
@@ -73,7 +68,7 @@ public class ChessClient {
                     default -> help();
                 };
             }
-        } catch (ResponseException ex) {
+        } catch (Throwable ex) {
             return "error";
         }
     }
@@ -84,10 +79,12 @@ public class ChessClient {
         System.out.println("Please enter your password");
         String password = scanner.nextLine();
 
-        auth = facade.login(new UserData(username, password, null));
+        if (!username.isEmpty() && !password.isEmpty()) {
+            auth = facade.login(new UserData(username, password, null));
+        }
 
         state = SIGNEDIN;
-        return "Succesfully logged in";
+        return "Successfully logged in";
 
     }
 
@@ -99,7 +96,9 @@ public class ChessClient {
         System.out.println("Please enter your email");
         String email = scanner.nextLine();
 
-        auth = facade.register(new UserData(username, password, email));
+        if (!username.isEmpty() && !password.isEmpty() && !email.isEmpty()) {
+            auth = facade.register(new UserData(username, password, email));
+        }
 
         state = SIGNEDIN;
         return "Successfully registered and signed in";
@@ -155,9 +154,12 @@ public class ChessClient {
             triedYet = true;
         }
         ChessGame.TeamColor color = colorText.equals("w") ? WHITE : BLACK;
-        facade.joinGame(gameID, color, auth);
-
-        return drawBoard(gameNum - 1, color);
+         if (facade.joinGame(gameID, color, auth)) {
+             return drawBoard(gameNum - 1, color);
+         }
+         else {
+             return "error";
+         }
     }
 
     private String observeGame() throws ResponseException {

@@ -70,9 +70,9 @@ public class ServerFacade {
     }
 
 //    join game
-    public void joinGame(int gameID, ChessGame.TeamColor color, String auth) throws ResponseException {
+    public boolean joinGame(int gameID, ChessGame.TeamColor color, String auth) throws ResponseException {
         var request = buildRequest("PUT", "/game", new GameInfo(gameID, color), new Header("authorization", auth));
-        sendRequest(request);
+        return isSuccessful(sendRequest(request).statusCode());
     }
 
 
