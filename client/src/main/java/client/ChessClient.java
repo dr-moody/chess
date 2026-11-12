@@ -53,9 +53,7 @@ public class ChessClient {
 
     private String eval(String line) {
         try {
-//            String[] tokens = line.toLowerCase().split(" ");
-//            String cmd = (tokens.length > 0) ? tokens[0] : "help";
-//            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+
             String cmd = line;
             if (state == SIGNEDOUT) {
                 return switch (cmd) {
